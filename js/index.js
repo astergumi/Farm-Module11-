@@ -27,17 +27,28 @@ let fruits = JSON.parse(fruitsJSON);
 
 // отрисовка карточек
 const display = () => {
+  //Очищаем список
+  fruitsList.innerHTML = "";
   // TODO: очищаем fruitsList от вложенных элементов,
   // чтобы заполнить актуальными данными из fruits
 
   for (let i = 0; i < fruits.length; i++) {
+const elementsArray = document.createElement('li');
+elementsArray.innerHTML = `
+<div class="fruit__item">
+<h2>Название:${fruits[i].kind}</h2>
+<p>Цвет:${fruits[i].color}</p>
+<p>Цвет:${fruits[i].weight}</p>
+</div>
+`;
+fruitsList.appendChild(elementsArray)
     // TODO: формируем новый элемент <li> при помощи document.createElement,
     // и добавляем в конец списка fruitsList при помощи document.appendChild
   }
 };
 
 // первая отрисовка карточек
-display();
+display(fruits);
 
 /*** ПЕРЕМЕШИВАНИЕ ***/
 
@@ -55,9 +66,12 @@ const shuffleFruits = () => {
     // TODO: допишите функцию перемешивания массива
     //
     // Подсказка: находим случайный элемент из fruits, используя getRandomInt
+    const randomElement = getRandomInt(0,fruits.length-1);
     // вырезаем его из fruits и вставляем в result.
+    const randomFruits = fruits.splice(randomElement, 1)[0]
     // ex.: [1, 2, 3], [] => [1, 3], [2] => [3], [2, 1] => [], [2, 1, 3]
     // (массив fruits будет уменьшатся, а result заполняться)
+    result.push(randomFruits);
   }
 
   fruits = result;
