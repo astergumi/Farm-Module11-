@@ -71,6 +71,7 @@ const shuffleFruits = () => {
     const randomFruits = fruits.splice(randomElement, 1)[0]
     // ex.: [1, 2, 3], [] => [1, 3], [2] => [3], [2, 1] => [], [2, 1, 3]
     // (массив fruits будет уменьшатся, а result заполняться)
+    //Добавляем результат randomFruits в конец массива result с помощью метода push
     result.push(randomFruits);
   }
 
