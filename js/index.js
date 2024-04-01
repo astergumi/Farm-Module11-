@@ -10,6 +10,8 @@ const kindInput = document.querySelector('.kind__input'); // поле с наз�
 const colorInput = document.querySelector('.color__input'); // поле с названием цвета
 const weightInput = document.querySelector('.weight__input'); // поле с весом
 const addActionButton = document.querySelector('.add__action__btn'); // кнопка добавления
+const minWeightInput = document.querySelector('.minweight__input');
+const maxWeightInput = document.querySelector('.maxweight__input');
 
 // список фруктов в JSON формате
 let fruitsJSON = `[
@@ -38,7 +40,7 @@ elementsArray.innerHTML = `
 <div class="fruit__item">
 <h2>Название:${fruits[i].kind}</h2>
 <p>Цвет:${fruits[i].color}</p>
-<p>Цвет:${fruits[i].weight}</p>
+<p>Вес:${fruits[i].weight}</p>
 </div>
 `;
 fruitsList.appendChild(elementsArray)
@@ -86,10 +88,21 @@ shuffleButton.addEventListener('click', () => {
 /*** ФИЛЬТРАЦИЯ ***/
 
 // фильтрация массива
+// TODO: допишите функцию
 const filterFruits = () => {
-  fruits.filter((item) => {
-    // TODO: допишите функцию
-  });
+    const minWeightFruit = parseInt(minWeightInput.value);
+    const maxWeightFruit = parseInt(maxWeightInput.value);
+
+    if (isNaN(minWeightFruit) || isNaN(maxWeightFruit)){
+      return alert('Введите корректное значение');
+    }
+
+    const resultFilter = [...fruits].filter((item) => {
+      return item.weight >= minWeightFruit && item.weight <= maxWeightFruit;
+    });
+
+fruits = resultFilter;
+display();
 };
 
 filterButton.addEventListener('click', () => {
@@ -145,5 +158,14 @@ sortActionButton.addEventListener('click', () => {
 addActionButton.addEventListener('click', () => {
   // TODO: создание и добавление нового фрукта в массив fruits
   // необходимые значения берем из kindInput, colorInput, weightInput
-  display();
+  const kindValue = kindInput.value;
+  const colorValue = colorInput.value;
+  const weightValue = parseFloat(weightInput.value);
+  if(kindValue === "" || colorValue === "" || isNaN(weightValue)){
+    alert('Введите корректные значения');
+  }
+  else{
+    fruits.push({"kind":kindValue, "color":colorValue, "weight":weightValue});
+    display();
+  }
 });
