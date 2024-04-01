@@ -35,15 +35,17 @@ const display = () => {
   // чтобы заполнить актуальными данными из fruits
 
   for (let i = 0; i < fruits.length; i++) {
-const elementsArray = document.createElement('li');
-elementsArray.innerHTML = `
-<div class="fruit__item">
-<h2>Название:${fruits[i].kind}</h2>
-<p>Цвет:${fruits[i].color}</p>
-<p>Вес:${fruits[i].weight}</p>
+    const elementsArray = document.createElement('li');
+    elementsArray.innerHTML = `
+<li class="fruit__item">
+<div class="fruit__info">
+<div>Название:${fruits[i].kind}</div>
+<div>Цвет:${fruits[i].color}</div>
+<div>Вес:${fruits[i].weight}</div>
 </div>
+</li>
 `;
-fruitsList.appendChild(elementsArray)
+    fruitsList.appendChild(elementsArray)
     // TODO: формируем новый элемент <li> при помощи document.createElement,
     // и добавляем в конец списка fruitsList при помощи document.appendChild
   }
@@ -68,7 +70,7 @@ const shuffleFruits = () => {
     // TODO: допишите функцию перемешивания массива
     //
     // Подсказка: находим случайный элемент из fruits, используя getRandomInt
-    const randomElement = getRandomInt(0,fruits.length-1);
+    const randomElement = getRandomInt(0, fruits.length - 1);
     // вырезаем его из fruits и вставляем в result.
     const randomFruits = fruits.splice(randomElement, 1)[0]
     // ex.: [1, 2, 3], [] => [1, 3], [2] => [3], [2, 1] => [], [2, 1, 3]
@@ -90,19 +92,19 @@ shuffleButton.addEventListener('click', () => {
 // фильтрация массива
 // TODO: допишите функцию
 const filterFruits = () => {
-    const minWeightFruit = parseInt(minWeightInput.value);
-    const maxWeightFruit = parseInt(maxWeightInput.value);
+  const minWeightFruit = parseInt(minWeightInput.value);
+  const maxWeightFruit = parseInt(maxWeightInput.value);
 
-    if (isNaN(minWeightFruit) || isNaN(maxWeightFruit)){
-      return alert('Введите корректное значение');
-    }
+  if (isNaN(minWeightFruit) || isNaN(maxWeightFruit)) {
+    return alert('Введите корректное значение');
+  }
 
-    const resultFilter = [...fruits].filter((item) => {
-      return item.weight >= minWeightFruit && item.weight <= maxWeightFruit;
-    });
+  const resultFilter = [...fruits].filter((item) => {
+    return item.weight >= minWeightFruit && item.weight <= maxWeightFruit;
+  });
 
-fruits = resultFilter;
-display();
+  fruits = resultFilter;
+  display();
 };
 
 filterButton.addEventListener('click', () => {
@@ -117,15 +119,52 @@ let sortTime = '-'; // инициализация состояния време�
 
 const comparationColor = (a, b) => {
   // TODO: допишите функцию сравнения двух элементов по цвету
+  const priorityColor = ['желтый', 'светло-коричневый', 'розово-красный', 'фиолетовый', 'зеленый'];
+  const priority1 = priorityColor.indexOf(a.color);
+  const priority2 = priorityColor.indexOf(b.color);
+  return priority1 > priority2;
 };
 
 const sortAPI = {
   bubbleSort(arr, comparation) {
     // TODO: допишите функцию сортировки пузырьком
+    const n = arr.length;
+    for (let i = 0; i < n - 1; i++) {
+      for (let j = 0; j < n - i - 1; j++) {
+        if (comparation(arr[j], arr[j + 1]) > 0) {
+          const temp = arr[j];
+          arr[j] = arr[j + 1];
+          arr[j + 1] = temp;
+        }
+      }
+    }
   },
-
   quickSort(arr, comparation) {
     // TODO: допишите функцию быстрой сортировки
+    // функция обмена элементов
+    if (arr.length <= 1) return arr;
+
+    const pivotIndex = Math.floor(Math.random() * arr.length);
+    const pivot = arr[pivotIndex];
+    const less = [];
+    const greater = [];
+
+    for (let i = 0; i < arr.length; i++) {
+      if (i === pivotIndex) continue;
+
+      const element = arr[i];
+      if (comparation(element, pivot) <= 0) {
+        less.push(element);
+      } else {
+        greater.push(element);
+      }
+    }
+
+    return [
+      ...sortAPI.quickSort(less, comparation),
+      pivot,
+      ...sortAPI.quickSort(greater, comparation),
+    ];
   },
 
   // выполняет сортировку и производит замер времени
@@ -143,14 +182,21 @@ sortTimeLabel.textContent = sortTime;
 
 sortChangeButton.addEventListener('click', () => {
   // TODO: переключать значение sortKind между 'bubbleSort' / 'quickSort'
+  if (sortKind === 'bubbleSort') {
+    sortKind = 'quickSort';
+  } else {
+    sortKind = 'bubbleSort';
+  }
+  sortKindLabel.textContent = sortKind;
 });
 
 sortActionButton.addEventListener('click', () => {
   // TODO: вывести в sortTimeLabel значение 'sorting...'
   const sort = sortAPI[sortKind];
   sortAPI.startSort(sort, fruits, comparationColor);
-  display();
   // TODO: вывести в sortTimeLabel значение sortTime
+  sortTimeLabel.textContent = sortTime;
+  display();
 });
 
 /*** ДОБАВИТЬ ФРУКТ ***/
@@ -158,14 +204,20 @@ sortActionButton.addEventListener('click', () => {
 addActionButton.addEventListener('click', () => {
   // TODO: создание и добавление нового фрукта в массив fruits
   // необходимые значения берем из kindInput, colorInput, weightInput
+  // Создаем переменные, которые будут хранить значения из input
   const kindValue = kindInput.value;
   const colorValue = colorInput.value;
   const weightValue = parseFloat(weightInput.value);
-  if(kindValue === "" || colorValue === "" || isNaN(weightValue)){
+  // Проверка ввода значений в поле
+  if (kindValue === "" || colorValue === "" || isNaN(weightValue)) {
     alert('Введите корректные значения');
-  }
-  else{
-    fruits.push({"kind":kindValue, "color":colorValue, "weight":weightValue});
+  } else {
+    // Добавление объекта в конец массива fruits с помощью метода push
+    fruits.push({
+      "kind": kindValue,
+      "color": colorValue,
+      "weight": weightValue
+    });
     display();
   }
 });
